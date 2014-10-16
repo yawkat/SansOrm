@@ -66,6 +66,10 @@ public class TransactionElf
      */
     public static boolean beginOrJoinTransaction()
     {
+        if (userTransaction == null) {
+            return true;
+        }
+
         boolean newTransaction = false;
         try
         {
@@ -88,6 +92,10 @@ public class TransactionElf
      */
     public static void commit()
     {
+        if (userTransaction == null) {
+            return;
+        }
+
         try
         {
             int status = userTransaction.getStatus();
