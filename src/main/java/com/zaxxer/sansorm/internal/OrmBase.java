@@ -18,11 +18,14 @@ package com.zaxxer.sansorm.internal;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -132,10 +135,17 @@ class OrmBase
     {
         switch (sqlType)
         {
+        case Types.VARCHAR:
+            if (object instanceof byte[])
+            {
+                return new String((byte[]) object, StandardCharsets.UTF_8);
+            }
+            // FALLTHROUGH
         case Types.TIMESTAMP:
             if (object instanceof java.util.Date)
             {
-                return new Timestamp(((java.util.Date) object).getTime());
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                return dateFormat.format((java.util.Date) object);
             }
             break;
         case Types.DECIMAL:
