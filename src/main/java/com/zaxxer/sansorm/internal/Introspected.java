@@ -25,24 +25,10 @@ import java.math.BigInteger;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import java.util.stream.Stream;
+import javax.persistence.*;
 import org.postgresql.util.PGobject;
 
 /**
@@ -94,7 +80,7 @@ public class Introspected
         {
             ArrayList<FieldColumnInfo> idFcInfos = new ArrayList<Introspected.FieldColumnInfo>();
 
-            for (Field field : clazz.getDeclaredFields())
+            for (Field field : fields(clazz))
             {
                 int modifiers = field.getModifiers();
                 if (Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers) || Modifier.isTransient(modifiers))
@@ -136,6 +122,17 @@ public class Introspected
         catch (Exception e)
         {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static List<Field> fields(Class<?> clazz)
+    {
+        if (clazz == Object.class) {
+            return Collections.emptyList();
+        } else {
+            List<Field> fields = new ArrayList<Field>(fields(clazz.getSuperclass()));
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            return fields;
         }
     }
 
