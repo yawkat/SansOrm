@@ -267,7 +267,7 @@ public class OrmWriter extends OrmBase
             StringBuilder sqlValues = new StringBuilder(") VALUES (");
             for (String column : columns)
             {
-                sqlSB.append(column).append(',');
+                sqlSB.append('`').append(column).append('`').append(',');
                 sqlValues.append("?,");
             }
             sqlValues.deleteCharAt(sqlValues.length() - 1);
